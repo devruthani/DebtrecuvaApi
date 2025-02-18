@@ -1,0 +1,27 @@
+{
+  "name": "debtrecuvaapi",
+  "version": "1.0.0",
+  "description": "Debtrecuva api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ruth",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
+    "emailjs": "^4.0.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "memory-cache": "^0.2.0",
+    "mysql2": "^3.12.0",
+    "mysql2-extended": "^2.0.0",
+    "nodemailer": "^6.10.0",
+    "random-otp-generator": "^2.0.1",
+    "sequelize": "^6.37.5",
+    "uuid": "^11.0.5"
+  }
+}
