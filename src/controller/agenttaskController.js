@@ -152,18 +152,17 @@ const agenttaskController = {
     
     async editAgentTask(req,res){
         try{
-            const {taskid} = req.params;
-            const updateTask = await Agenttask.findOne({where:{taskid:taskid}});
+            const {agentid} = req.body;
+            const updateTask = await Agenttask.findOne({where:{agentid: agentid}});
          
             if(!updateTask){
-                return res.status(200).json({
+                return res.status(400).json({
                     error:true,
                     message:"Agent Task with this id does not exist"
                 })
     
             }else{
-                await Agenttask.update({
-                agentid:req.body.agentid,
+                await updateTask.update({
                 tasktype:req.body.tasktype,
                 taskdate:req.body.taskdate,
                 description:req.body.description,
@@ -171,7 +170,7 @@ const agenttaskController = {
                 taskstatus:req.body.taskstatus,
                 taskfeedback:req.body.taskfeedback
 
-                },{where:{taskid:req.body.taskid}})
+                },{where:{agentid:req.body.agentid}})
                
                 return res.status(200).json({
                     error:false,

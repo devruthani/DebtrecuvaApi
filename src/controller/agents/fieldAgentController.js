@@ -20,6 +20,7 @@ const fieldAgentController = {
     
           if (
             req.body.firstname &&
+            req.body.tenantid &&
             req.body.lastname &&
             req.body.email &&
             req.body.mobile &&
@@ -32,6 +33,7 @@ const fieldAgentController = {
             if (emailRegexp.test(req.body.email)) {
               const regAgent = await Fieldagent.create({
                 agentid: agentId,
+                tenantid:req.body.tenantid,
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
@@ -353,12 +355,12 @@ const fieldAgentController = {
       const editAgent = await Fieldagent.findOne({ where: { agentid: agentid } });
 
       if (!editAgent) {
-        return res.status(404).json({
+        return res.status(400).json({
           error: true,
           message: "Agent with this id not found",
         });
       } else {
-        await Fieldagent.update(
+        await editAgent.update(
           {
             firstname: req.body.firstname,
             lastname: req.body.lastname,
