@@ -69,14 +69,14 @@ const agenttaskController = {
             } else {
                 return res.status(404).json({
                     error: true,
-                    message: "Failed to fetch agents"
+                    message: "Failed to fetch task"
                 });
             }
         } catch (error) {
             console.log(error);
             return res.status(500).json({
                 error: true,
-                message: "Error fetching course content",
+                message: "Error fetching task",
                 data: error.message
             });
         }
@@ -102,7 +102,7 @@ const agenttaskController = {
         }else{
             return res.status(200).json({
                 error:false,
-                message:"Course Task acquired successfully",
+                message:"Task acquired successfully",
                 data:getByid
             })
            
@@ -190,7 +190,7 @@ const agenttaskController = {
         }
     },
     
-    /* ------------------------------ DELETE COURSE ----------------------------- */
+    /* ------------------------------ DELETE TASK ----------------------------- */
     async deleteTask(req,res){
         try{
             const {taskid } = req.params;

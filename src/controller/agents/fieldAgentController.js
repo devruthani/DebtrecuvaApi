@@ -167,7 +167,7 @@ const fieldAgentController = {
             if (!user) {
                 return res.status(404).json({
                     error: true,
-                    message: "User with this email does not exist",
+                    message: "agent with this email does not exist",
                 });
             }else{
 
@@ -226,7 +226,7 @@ const fieldAgentController = {
           if (!user) {
               return res.status(404).json({
                   error: true,
-                  message: "User with this email does not exist",
+                  message: "agent with this email does not exist",
               });
           }else{
 
