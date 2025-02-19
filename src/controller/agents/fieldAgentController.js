@@ -8,75 +8,175 @@ const { Fieldagent } = require("../../model");
 const { Model } = require("../../model/fieldagent.model");
 require("dotenv").config();
 
+var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,10}$/;
+
 const emailRegexp =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 
 const fieldAgentController = {
-    async fieldAgentsignUp(req, res) {
-        try {
-          const agentId = crypto.randomBytes(16).toString("hex");
-          const password = encrypt(req.body.password);
+    // async fieldAgentsignUp(req, res) {
+    //     try {
+    //       const agentId = crypto.randomBytes(16).toString("hex");
+    //       const password = encrypt(req.body.password);
     
-          if (
-            req.body.firstname &&
-            req.body.tenantid &&
-            req.body.lastname &&
-            req.body.email &&
-            req.body.mobile &&
-            req.body.password &&
-            req.body.lga &&
-            req.body.state &&
-            req.body.address 
+    //       if (
+    //         req.body.firstname &&
+    //         req.body.tenantid &&
+    //         req.body.lastname &&
+    //         req.body.email &&
+    //         req.body.mobile &&
+    //         req.body.password &&
+    //         req.body.lga &&
+    //         req.body.state &&
+    //         req.body.address 
 
-          ) {
-            if (emailRegexp.test(req.body.email)) {
-              const regAgent = await Fieldagent.create({
-                agentid: agentId,
-                tenantid:req.body.tenantid,
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                mobile: req.body.mobile,
-                state: req.body.state,
-                address: req.body.address,
-                lga: req.body.lga,
-                password: password,
-              });
-              if (regAgent) {
-                return res.status(200).json({
-                  error: false,
-                  message: "You have been registered successfully",
-                });
-              } else {
-                return res.status(400).json({
-                  error: true,
-                  message: "Registration failed",
-                });
-              }
-            } else {
-              return res.status(400).json({
-                error: true,
-                message: "Email should be provided in the right format",
-              });
-            }
-          } else {
-            return res.status(400).json({
-              error: true,
-              message: "All fields are required",
-            });
-          }
-        } catch (error) {
-          console.log(error);
-          return res.status(500).json({
-            error: true,
-            message: "Oops! some thing went wrong",
-            data: error.message,
-          });
-        }
-      },
+    //       ) {
+    //         if (emailRegexp.test(req.body.email)) {
+    //           const regAgent = await Fieldagent.create({
+    //             agentid: agentId,
+    //             tenantid:req.body.tenantid,
+    //             firstname: req.body.firstname,
+    //             lastname: req.body.lastname,
+    //             email: req.body.email,
+    //             mobile: req.body.mobile,
+    //             state: req.body.state,
+    //             address: req.body.address,
+    //             lga: req.body.lga,
+    //             password: password,
+    //           });
+    //           if (regAgent) {
+    //             return res.status(200).json({
+    //               error: false,
+    //               message: "You have been registered successfully",
+    //             });
+    //           } else {
+    //             return res.status(400).json({
+    //               error: true,
+    //               message: "Registration failed",
+    //             });
+    //           }
+    //         } else {
+    //           return res.status(400).json({
+    //             error: true,
+    //             message: "Email should be provided in the right format",
+    //           });
+    //         }
+    //       } else {
+    //         return res.status(400).json({
+    //           error: true,
+    //           message: "All fields are required",
+    //         });
+    //       }
+    //     } catch (error) {
+    //       console.log(error);
+    //       return res.status(500).json({
+    //         error: true,
+    //         message: "Oops! some thing went wrong",
+    //         data: error.message,
+    //       });
+    //     }
+    //   },
 
     //   Login user 
+    
+    async fieldAgentsignUp(req, res) {
+      try {
+        const {
+          tenantid,
+          firstname,
+          lastname,
+          email,
+          mobile,
+          password,
+          lga,
+          state,
+          address
+        } = req.body;
+    
+        // Validate required fields
+        if (!firstname || !tenantid || !lastname || !email || !mobile || !password || !lga || !state || !address) {
+          return res.status(400).json({
+            error: true,
+            message: "All fields are required",
+          });
+        }
+    
+        // Validate email format
+        if (!emailRegexp.test(email)) {
+          return res.status(400).json({
+            error: true,
+            message: "Email should be provided in the right format",
+          });
+        }
+    
+        // Validate password format
+        if (!passwordRegex.test(password.trim())) {
+          return res.status(400).json({
+            error: true,
+            message: "Password should contain at least 6 characters, uppercase, lowercase, number, and a special symbol",
+          });
+        }
+    
+        // Validate mobile number (should be numeric)
+        if (isNaN(mobile.trim())) {
+          return res.status(400).json({
+            error: true,
+            message: "Mobile should be a number",
+          });
+        }
+    
+        // Check if the agent already exists in the database
+        const existingAgent = await Fieldagent.findOne({ where: { email } });
+        if (existingAgent) {
+          return res.status(400).json({
+            error: true,
+            message: "Agent with this email already exists",
+          });
+        }
+    
+        // Generate agent ID and encrypt password
+        const agentId = crypto.randomBytes(16).toString("hex");
+        const encryptedPassword = encrypt(password);
+    
+        // Register the new agent
+        const newAgent = await Fieldagent.create({
+          agentid: agentId,
+          tenantid,
+          firstname,
+          lastname,
+          email,
+          mobile,
+          state,
+          address,
+          lga,
+          password: encryptedPassword,
+        });
+    
+        if (newAgent) {
+          return res.status(200).json({
+            error: false,
+            message: "Agent registered successfully",
+          });
+        } else {
+          return res.status(400).json({
+            error: true,
+            message: "Registration failed",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+          error: true,
+          message: "Oops! Something went wrong",
+          data: error.message,
+        });
+      }
+    },
+    
+    
+    
+    
     async login(req, res) {
         try {
           var regemail = req.body.email;
