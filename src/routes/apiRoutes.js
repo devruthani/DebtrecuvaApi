@@ -30,11 +30,11 @@ router.get("/api/getdebtors/:agentid",assignagentController.getassignedDebtorsby
 
 // agent task starts here 
 router.post("/api/task/createtask",agenttaskController.createAgentTask);
-router.get("/api/task/getbyid/:agentid",agenttaskController.fetchByagentid);
+router.get("/api/task/getbyagentid/:agentid",agenttaskController.fetchByagentid);
 router.get("/api/task/getbytaskid/:taskid",agenttaskController.fetchTaskByid);
 router.get("/api/task/getall/:offset/:limit",agenttaskController.fetchAllAgenttask);
 router.post("/api/task/updatetask",agenttaskController.editAgentTask);
-router.post("/api/task/deletetask",agenttaskController.deleteTask);
+router.post("/api/task/deletetask/:taskid",agenttaskController.deleteTask);
 
 
 // ends here 

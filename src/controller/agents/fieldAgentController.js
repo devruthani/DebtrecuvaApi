@@ -109,86 +109,161 @@ const fieldAgentController = {
           });
         }
       },
+      // async forgotPassword(req, res) {
+      //   try {
+      //     // check if email was sent
+      //     const checkEmail = req.body.email;
+      //     if (!checkEmail) {
+      //       return res.status(400).json({
+      //         error: true,
+      //         message: "No email was sent",
+      //       });
+      //     } else {
+      //       const otp = randomOtp(6);
+      //       // create a jwt containing the otp and email, with a 5 minutes expiration time
+      //       const token = jwt.sign(
+      //         { otp, email: checkEmail },
+      //         process.env.JWT_SECRET_KEY,
+      //         { expiresIn: "5m" }
+      //       );
+    
+      //       // Send the token in the email (user will use this token in the verification process)
+      //       await sendMail(
+      //         checkEmail,
+      //         "OTP Verification Code",
+      //         `<h1>Your OTP verification code is ${otp} </h1>`
+      //       );
+    
+      //       return res.status(200).json({
+      //         error: false,
+      //         message: "An OTP has been sent to your email",
+      //         token: token,
+      //       });
+      //     }
+      //   } catch (error) {
+      //     console.log(error);
+      //     return res.status(500).json({
+      //       error: true,
+      //       message: "Oops! some thing went wrong",
+      //       data: error.message,
+      //     });
+      //   }
+      // },
+    
       async forgotPassword(req, res) {
         try {
-          // check if email was sent
-          const checkEmail = req.body.email;
-          if (!checkEmail) {
-            return res.status(400).json({
-              error: true,
-              message: "No email was sent",
-            });
-          } else {
+            // Check if email was provided
+            const checkEmail = req.body.email;
+            if (!checkEmail) {
+                return res.status(400).json({
+                    error: true,
+                    message: "No email was sent",
+                });
+            }
+            
+    
+            // Check if the email exists in the database
+            const user = await Fieldagent.findOne({ where: {email: checkEmail} });
+            if (!user) {
+                return res.status(404).json({
+                    error: true,
+                    message: "User with this email does not exist",
+                });
+            }else{
+
+           console.log(user, checkEmail)
+             
+            // Generate OTP
             const otp = randomOtp(6);
-            // create a jwt containing the otp and email, with a 5 minutes expiration time
+    
+            // Create a JWT containing the OTP and email with a 5-minute expiration time
             const token = jwt.sign(
-              { otp, email: checkEmail },
-              process.env.JWT_SECRET_KEY,
-              { expiresIn: "5m" }
+                { otp, email: checkEmail },
+                process.env.JWT_SECRET_KEY,
+                { expiresIn: "5m" }
             );
     
-            // Send the token in the email (user will use this token in the verification process)
+            // Send OTP via email
             await sendMail(
-              checkEmail,
-              "OTP Verification Code",
-              `<h1>Your OTP verification code is ${otp} </h1>`
+                checkEmail,
+                "OTP Verification Code",
+                `<h1>Your OTP verification code is ${otp}</h1>`
             );
     
             return res.status(200).json({
-              error: false,
-              message: "An OTP has been sent to your email",
-              token: token,
+                error: false,
+                message: "An OTP has been sent to your email",
+                token: token,
             });
           }
+    
         } catch (error) {
-          console.log(error);
-          return res.status(500).json({
-            error: true,
-            message: "Oops! some thing went wrong",
-            data: error.message,
-          });
+            console.log(error);
+            return res.status(500).json({
+                error: true,
+                message: "Oops! Something went wrong",
+                data: error.message,
+            });
         }
-      },
+    },
     
       /* ---------------- // resend otp if you did not get any one ---------------- */
     
       async resentOTP(req, res) {
         try {
+          // Check if email was provided
           const checkEmail = req.body.email;
           if (!checkEmail) {
-            res.status(404).json({
-              error: true,
-              message: "No email was provided",
-            });
-          } else {
-            const otp = randomOtp(6);
-            const token = jwt.sign(
+              return res.status(400).json({
+                  error: true,
+                  message: "No email was sent",
+              });
+          }
+          
+  
+          // Check if the email exists in the database
+          const user = await Fieldagent.findOne({ where: {email: checkEmail} });
+          if (!user) {
+              return res.status(404).json({
+                  error: true,
+                  message: "User with this email does not exist",
+              });
+          }else{
+
+         console.log(user, checkEmail)
+           
+          // Generate OTP
+          const otp = randomOtp(6);
+  
+          // Create a JWT containing the OTP and email with a 5-minute expiration time
+          const token = jwt.sign(
               { otp, email: checkEmail },
               process.env.JWT_SECRET_KEY,
               { expiresIn: "5m" }
-            );
-    
-            // send the new token and otp via email
-            await sendMail(
+          );
+  
+          // Send OTP via email
+          await sendMail(
               checkEmail,
               "OTP Verification Code",
-              `<h1>Your OTP verification code is ${otp} </h1>`
-            );
-    
-            return res.status(200).json({
+              `<h1>Your OTP verification code is ${otp}</h1>`
+          );
+  
+          return res.status(200).json({
               error: false,
               message: "An OTP has been sent to your email",
               token: token,
-            });
-          }
-        } catch (error) {
-          console.log(error);
-          return res.status(500).json({
-            error: true,
-            message: "Oops! some thing went wrong, failed to resend otp",
-            data: error.message,
           });
         }
+  
+      } catch (error) {
+          console.log(error);
+          return res.status(500).json({
+              error: true,
+              message: "Oops! Something went wrong",
+              data: error.message,
+          });
+      }
       },
       //
       /* ------------------------------- verify otp ------------------------------- */
