@@ -3,6 +3,7 @@ const fieldAgentController = require("../controller/agents/fieldAgentController"
 const assignagentController = require("../controller/assignagentController");
 const { agenttaskController } = require("../controller/agenttaskController");
 const { calllogController } = require("../controller/calllogController");
+const { customerdocController } = require("../controller/customerdocController");
 const router = express.Router();
 
 
@@ -19,6 +20,8 @@ router.get("/api/fieldagent/getbyid/:agentid",fieldAgentController.getAgentbyid)
 router.get("/api/fieldagent/getall/:offset/:limit",fieldAgentController.getAllAgents);
 router.post("/api/fieldagent/edit",fieldAgentController.editAgent);
 router.post("/api/fieldagent/delete/:agentid",fieldAgentController.deleteAgent);
+router.get("/api/fieldagent/stats/:agentid",fieldAgentController.stats);
+
 // end 
 
 
@@ -51,9 +54,18 @@ router.get("/api/calllog/getbydebtorid/:debtorid",calllogController.fetchByDebto
 router.get("/api/calllog/getbyagentid/:agentid",calllogController.fetchByAgentid);
 router.post("/api/calllog/edit",calllogController.editCallLog);
 router.post("/api/calllog/delete/:calllogid",calllogController.deleteCalllog);
+/* -------------------------------- call log ends here-------------------------------- */
+
+/* ------------------------------ document api --------------------------------------- */
+
+router.post("/api/document/create",customerdocController.createDocument);
+router.get("/api/document/getall",customerdocController.fetchAllDocuments);
+router.get("/api/document/getbyid/:documentid",customerdocController.getDocumentbyid);
+router.post("/api/document/edit",customerdocController.editDocument);
+router.post("/api/document/delete/:documentid",customerdocController.deleteDocument);
 
 
-
+/* ------------------------------ document api ends here------------------------------ */
 
 
 

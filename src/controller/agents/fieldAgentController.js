@@ -4,8 +4,9 @@ const randomOtp = require("random-otp-generator");
 const { sendMail } = require("../../utils/nodemailer");
 const Cache = require("memory-cache");
 const jwt = require("jsonwebtoken");
-const { Fieldagent } = require("../../model");
+const { Fieldagent, Assignagent, Calllog } = require("../../model");
 const { Model } = require("../../model/fieldagent.model");
+const { error } = require("console");
 require("dotenv").config();
 
 var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,10}$/;
@@ -369,95 +370,99 @@ const fieldAgentController = {
       /* ------------------------------- verify otp ------------------------------- */
       async verifyOTP(req, res) {
         try {
-          const { token, verifyotp } = req.body;
+            const { token, verifyotp } = req.body;
+            console.log("Received token:", token);
+            console.log("Received OTP:", verifyotp);
     
-          // Check if token or verifyotp is missing
-          if (!token || !verifyotp) {
-            return res.status(400).json({
-              error: true,
-              message: "OTP or token is missing",
-            });
-          }
+            if (!token || !verifyotp) {
+                return res.status(400).json({ error: true, message: "OTP or token is missing" });
+            }
     
-          // Verify the JWT token
-          const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            console.log("Decoded token:", decoded);
     
-          // Check if the decoded OTP matches the provided one
-          if (decoded.otp === verifyotp) {
-            return res.status(200).json({
-              error: false,
-              message: "OTP verified successfully",
-            });
-          } else {
-            return res.status(400).json({
-              error: true,
-              message: "The OTP you provided is incorrect",
-            });
-          }
+            if (decoded.otp === verifyotp) {
+                return res.status(200).json({ error: false, message: "OTP verified successfully" });
+            } else {
+                return res.status(400).json({ error: true, message: "The OTP you provided is incorrect" });
+            }
         } catch (error) {
-          if (error.name === "TokenExpiredError") {
-            return res.status(400).json({
-              error: true,
-              message: "The OTP has expired",
-            });
-          } else {
-            return res.status(400).json({
-              error: true,
-              message: error.message,
-            });
-          }
+            if (error.name === "TokenExpiredError") {
+                console.log("Token expired at:", error.expiredAt);
+                return res.status(400).json({ error: true, message: "The OTP has expired" });
+            } else {
+                console.log("JWT Verification Error:", error);
+                return res.status(400).json({ error: true, message: error.message });
+            }
         }
-      },
+    },
+    
     
       /* ----------------------------- reset password ----------------------------- */
       async resetPassword(req, res) {
         try {
-          const newpassword = req.body.password;
-          const confirmpassword = req.body.confirmpassword;
-          const checkemail = req.body.email;
-    
+          // const { password: newpassword, confirmpassword } = req.body;
+          const newpassword = req.body.newpassword
+          const confirmpassword = req.body.confirmpassword
+      
+          // Check if both password fields are provided
+          if (!newpassword || !confirmpassword) {
+            return res.status(400).json({
+              error: true,
+              message: "New password and confirm password are required",
+            });
+          }
+      
           // Check if the new password matches the confirmed password
           if (newpassword !== confirmpassword) {
-            return res.status(404).json({
+            return res.status(400).json({
               error: true,
               message: "Passwords do not match",
             });
-          } else {
-            // Find user by email
-            const theAgent = await Fieldagent.findOne({ where: { email: checkemail } });
-    
-            if (theAgent.length > 0) {
-              // Encrypt the new password (replace with your encryption method)
-              const encryptedPassword = encrypt(newpassword);
-    
-              // Update the user's password in the "Users" table
-              await Fieldagent.update(
-                { password: encryptedPassword },
-                { email: checkemail }
-              );
-    
-              return res.status(200).json({
-                error: false,
-                message: "Password reset successfully",
-              });
-            } else {
-              return res.status(400).json({
-                error: true,
-                message: "Admin with this email does not exist",
-              });
-            }
           }
+      
+          // Validate the new password format (at least 6 characters, uppercase, lowercase, number, and a symbol)
+          if (!passwordRegex.test(newpassword.trim())) {
+            return res.status(400).json({
+              error: true,
+              message:
+                "Password must contain at least 6 characters, including uppercase, lowercase, number, and a special symbol",
+            });
+          }
+      
+          // Encrypt the new password using your encryption method
+          const encryptedPassword = encrypt(newpassword);
+      
+          // Update the password for the user; assuming the user is already verified via email
+          const updated = await Fieldagent.update(
+            { password: encryptedPassword },
+            { where: { email: req.body.email } }
+          );
+      
+          // Check if any row was affected
+          if (updated[0] === 0) {
+            return res.status(400).json({
+              error: true,
+              message: "Failed to reset password. Please try again.",
+            });
+          }
+      
+          return res.status(200).json({
+            error: false,
+            message: "Password reset successfully",
+          });
         } catch (error) {
           console.error("Password reset failed", error);
-          return res.status(404).json({
+          return res.status(500).json({
             error: true,
             message: "Failed to reset password",
             data: error.message,
           });
         }
       },
+      
 
-      // GET AGENT BY ID 
+      /* --------------------------- // GET AGENT BY ID --------------------------- */
   
    async getAgentbyid(req, res) {
     try {
@@ -594,6 +599,37 @@ const fieldAgentController = {
     }
   },
 
+  /* -------------------------------All Statistics ------------------------------- */
+
+  async stats(req,res){
+      try {
+        
+        const {agentid} = req.params;
+    
+        var allCustomers = await Assignagent.findAll({where: {agentid}})
+        var allCallLogs = await Calllog.findAll({where:{agentid}})
+        return res.status(200).json({
+          error:false,
+          message:"Stats acquired Successful",
+          data: [{
+            "TotalCustomers": allCustomers.length,
+            "TotalCallLogs":allCallLogs.length
+          }]
+
+        })
+
+
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          error: true,
+          message: "Oops! some thing went wrong",
+          data: error.message,
+        });
+      }
+
+
+  }
 
 
 

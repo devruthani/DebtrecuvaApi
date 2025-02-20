@@ -76,7 +76,7 @@ const agenttaskController = {
             console.log(error);
             return res.status(500).json({
                 error: true,
-                message: "Error fetching task",
+                message: "Oops! some thing went wrong",
                 data: error.message
             });
         }
