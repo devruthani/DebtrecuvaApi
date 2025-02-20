@@ -6,49 +6,51 @@ const { Assignagent } = require("../model")
 
 const assignagentController = {
 
-    async assignAgent(req,res){
+  async assignAgent(req, res) {
+    try {
+        const { agentid, debtorsid } = req.body;
 
-        try {
-            if(req.body.agentid && req.body.debtorsid){
-
-                const agentAssigned = await Assignagent.create({
-                    agentid: req.body.agentid,
-                    debtorsid:req.body.debtorsid
-                })
-    
-                if(agentAssigned){
-                    return res.status(200).json({
-                        error: false,
-                        message: "Agent has been assigned to this debtor"
-                    })
-                }else{
-                    return res.status(400).json({
-                        error: true,
-                        message: "Failed to assign agent to debtor"
-                    })
-                }
-
-            }else{
-                return res.status(400).json({
-                    error: true,
-                    message: "All fields are required"
-                })
-                
-            }
-
-           
-            
-        } catch (error) {
-            console.log(error);
-            return res.status(500).json({
-              error: true,
-              message: "Oops! some thing went wrong",
-              data: error.message,
+        if (!agentid || !debtorsid) {
+            return res.status(400).json({
+                error: true,
+                message: "All fields are required",
             });
-            
         }
 
-    },
+        // Check if the debtor has already been assigned to an agent
+        const existingDebtor = await Assignagent.findOne({ where: { debtorsid },});
+
+        if (existingDebtor) {
+            return res.status(400).json({
+                error: true,
+                message: "This Customer has already been assigned to an agent",
+            });
+        }
+
+        // Assign the agent to the debtor
+        const agentAssigned = await Assignagent.create({ agentid, debtorsid });
+
+        if (agentAssigned) {
+            return res.status(200).json({
+                error: false,
+                message: "Agent successfully assigned to a customer",
+            });
+        } else {
+            return res.status(400).json({
+                error: true,
+                message: "Failed to assign Agent to customer",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            error: true,
+            message: "Oops! Something went wrong",
+            data: error.message,
+        });
+    }
+},
+
 
     // get debtors by agent assinged id 
     async getassignedDebtorsbyid(req, res) {
@@ -102,6 +104,37 @@ const assignagentController = {
         }
       },
 
+      /* --------------- get all debtors id that have been assigned --------------- */
+      async getAllDebtorsid(req, res) {
+        try {
+          // Fetch only the 'debtorsid' field from the database.
+          const debtors = await Assignagent.findAll({
+            attributes: ['debtorsid']
+          });
+      
+          // Check if the returned array is empty
+          if (!debtors || debtors.length === 0) {
+            return res.status(404).json({
+              error: true,
+              message: "No debtors found"
+            });
+          } else {
+            return res.status(200).json({
+              error: false,
+              message: "All Assigned Debtorsid",
+              data: debtors
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({
+            error: true,
+            message: "Oops! Something went wrong",
+            data: error.message,
+          });
+        }
+      }
+      
 
 }
 module.exports = assignagentController

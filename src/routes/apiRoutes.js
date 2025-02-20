@@ -2,17 +2,18 @@ const express = require("express");
 const fieldAgentController = require("../controller/agents/fieldAgentController");
 const assignagentController = require("../controller/assignagentController");
 const { agenttaskController } = require("../controller/agenttaskController");
+const { calllogController } = require("../controller/calllogController");
 const router = express.Router();
 
 
 
-
+calllogController
         // agent registration 
 router.post("/api/fieldagent/register",fieldAgentController.fieldAgentsignUp);
 router.post("/api/fieldagent/login",fieldAgentController.login);
 router.post("/api/fieldagent/forgotpassword",fieldAgentController.forgotPassword);
 router.post("/api/fieldagent/verifyotp",fieldAgentController.verifyOTP);
-router.post("/api/fieldagent/resendotp",fieldAgentController.resentOTP);
+router.post("/api/fieldagent/resendotp",fieldAgentController.resendOTP);
 router.post("/api/fieldagent/resetpassword",fieldAgentController.resetPassword);
 router.get("/api/fieldagent/getbyid/:agentid",fieldAgentController.getAgentbyid);
 router.get("/api/fieldagent/getall/:offset/:limit",fieldAgentController.getAllAgents);
@@ -26,6 +27,7 @@ router.post("/api/fieldagent/delete/:agentid",fieldAgentController.deleteAgent);
 
 router.post("/api/assignagent/assign",assignagentController.assignAgent);
 router.get("/api/getdebtors/:agentid",assignagentController.getassignedDebtorsbyid);
+router.get("/api/alldebtorsid",assignagentController.getAllDebtorsid);
 // end 
 
 // agent task starts here 
@@ -38,6 +40,17 @@ router.post("/api/task/deletetask/:taskid",agenttaskController.deleteTask);
 
 
 // ends here 
+/* -------------------------------- call log -------------------------------- */
+
+router.post("/api/calllog/create",calllogController.createCallog);
+router.get("/api/calllog/getall/:offset/:limit",calllogController.fetchAllCallLogs);
+router.get("/api/calllog/getbycallid/:calllogid",calllogController.fetchallByid);
+router.get("/api/calllog/getbytenantid/:tenantid",calllogController.fetchByTenantid);
+router.get("/api/calllog/getbyclientid/:clientid",calllogController.fetchByClientid);
+router.get("/api/calllog/getbydebtorid/:debtorid",calllogController.fetchByDebtorid);
+router.get("/api/calllog/getbyagentid/:agentid",calllogController.fetchByAgentid);
+router.post("/api/calllog/edit",calllogController.editCallLog);
+router.post("/api/calllog/delete/:calllogid",calllogController.deleteCalllog);
 
 
 

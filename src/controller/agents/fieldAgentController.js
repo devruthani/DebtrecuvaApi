@@ -267,7 +267,7 @@ const fieldAgentController = {
             if (!user) {
                 return res.status(404).json({
                     error: true,
-                    message: "agent with this email does not exist",
+                    message: "Agent with this email does not exist",
                 });
             }else{
 
@@ -309,7 +309,7 @@ const fieldAgentController = {
     
       /* ---------------- // resend otp if you did not get any one ---------------- */
     
-      async resentOTP(req, res) {
+      async resendOTP(req, res) {
         try {
           // Check if email was provided
           const checkEmail = req.body.email;
@@ -326,7 +326,7 @@ const fieldAgentController = {
           if (!user) {
               return res.status(404).json({
                   error: true,
-                  message: "agent with this email does not exist",
+                  message: "Agent with this email does not exist",
               });
           }else{
 
@@ -389,21 +389,21 @@ const fieldAgentController = {
               message: "OTP verified successfully",
             });
           } else {
-            return res.status(404).json({
+            return res.status(400).json({
               error: true,
               message: "The OTP you provided is incorrect",
             });
           }
         } catch (error) {
           if (error.name === "TokenExpiredError") {
-            return res.status(500).json({
+            return res.status(400).json({
               error: true,
               message: "The OTP has expired",
             });
           } else {
-            return res.status(500).json({
+            return res.status(400).json({
               error: true,
-              message: "Invalid Token",
+              message: error.message,
             });
           }
         }

@@ -40,6 +40,7 @@ DB.sequelize = initialInstance;
 const Fieldagent = DB.fieldagent = require("./fieldagent.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 const Assignagent = DB.assignagent = require("./assignagent.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 const Agenttask = DB.agenttask = require("./agenttask.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
+const Calllog = DB.calllog = require("./calllog.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 
 
 
@@ -48,5 +49,6 @@ module.exports = {
     DB,
     Fieldagent,
     Assignagent,
-    Agenttask
+    Agenttask,
+    Calllog
 }
