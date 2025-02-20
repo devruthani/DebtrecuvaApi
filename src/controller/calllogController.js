@@ -108,6 +108,7 @@ const calllogController = {
             
        const {calllogid} = req.params;
         const getByid = await Calllog.findAll({where:{calllogid}});
+
         if(!getByid){
             return res.status(400).json({
                 error:true,
@@ -140,10 +141,10 @@ const calllogController = {
             
        const {debtorid} = req.params;
         const getBydebtorid = await Calllog.findAll({where:{debtorid}});
-        if(!getBydebtorid){
+        if(getBydebtorid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Call log"
+                message:"ID not found"
             })
           
     
@@ -171,10 +172,10 @@ const calllogController = {
             
        const {agentid} = req.params;
         const getByagentid = await Calllog.findAll({where:{agentid}});
-        if(!getByagentid){
+        if(getByagentid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Call log"
+                message:"ID not found"
             })
           
     
@@ -202,10 +203,10 @@ const calllogController = {
             
        const {clientid} = req.params;
         const getByclientid = await Calllog.findAll({where:{clientid}});
-        if(!getByclientid){
+        if(getByclientid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Call log"
+                message:"ID not Found "
             })
           
     
@@ -233,10 +234,10 @@ const calllogController = {
             
        const {tenantid} = req.params;
         const getBytenantid = await Calllog.findAll({where:{tenantid}});
-        if(!getBytenantid){
+        if(getBytenantid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Call log"
+                message:"ID not found"
             })
           
     
@@ -273,28 +274,28 @@ const calllogController = {
     
             }else{
                 await updateCalllog.update({
-                    debtorid: register.body.debtorid,
-                    tenantid: register.body.tenantid,
-                    nameofborrower: register.body.nameofborrower,
-                    primarynumber: register.body.primarynumber,
-                    loanid: register.body.loanid,
-                    agentdoc : register.body.agentdoc,
-                    agentid : register.body.agentid,
-                    clientid : register.body.clientid,
-                    callconnected : register.body.callconnected,
-                    rightparty : register.body.rightparty,
-                    ptp : register.body.ptp,
-                    noofattemp : register.body.noofattemp,
-                    noofconnected : register.body.noofconnected,
-                    deliquence : register.body.deliquence,
-                    noofsms : register.body.noofsms,
-                    callstatus : register.body.callstatus,
-                    comment : register.body.comment,
-                    ptpamount : register.body.ptpamount,
-                    ptpdate : register.body.ptpdate,
-                    modeofcommunication : register.body.modeofcommunication,
-                    timeSpent: register.body.timeSpent,
-                    adjustedTimeSpent: register.body.adjustedTimeSpent
+                    debtorid: req.body.debtorid,
+                    tenantid: req.body.tenantid,
+                    nameofborrower: req.body.nameofborrower,
+                    primarynumber: req.body.primarynumber,
+                    loanid: req.body.loanid,
+                    agentdoc : req.body.agentdoc,
+                    agentid : req.body.agentid,
+                    clientid : req.body.clientid,
+                    callconnected : req.body.callconnected,
+                    rightparty : req.body.rightparty,
+                    ptp : req.body.ptp,
+                    noofattemp : req.body.noofattemp,
+                    noofconnected : req.body.noofconnected,
+                    deliquence : req.body.deliquence,
+                    noofsms : req.body.noofsms,
+                    callstatus : req.body.callstatus,
+                    comment : req.body.comment,
+                    ptpamount : req.body.ptpamount,
+                    ptpdate : req.body.ptpdate,
+                    modeofcommunication : req.body.modeofcommunication,
+                    timeSpent: req.body.timeSpent,
+                    adjustedTimeSpent: req.body.adjustedTimeSpent
 
                 },{where:{calllogid:req.body.calllogid}})
                

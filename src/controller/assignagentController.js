@@ -1,58 +1,116 @@
 const db = require("../../dbconnection/dbconfig")
-const { Assignagent } = require("../model")
+const { Assignagent, Fieldagent } = require("../model")
 
 
 
 
 const assignagentController = {
 
-  async assignAgent(req, res) {
-    try {
-        const { agentid, debtorsid } = req.body;
+//   async assignAgent(req, res) {
+//     try {
+//         const { agentid, debtorsid } = req.body;
 
-        if (!agentid || !debtorsid) {
-            return res.status(400).json({
-                error: true,
-                message: "All fields are required",
-            });
-        }
+//         if (!agentid || !debtorsid) {
+//             return res.status(400).json({
+//                 error: true,
+//                 message: "All fields are required",
+//             });
+//         }
 
-        // Check if the debtor has already been assigned to an agent
-        const existingDebtor = await Assignagent.findOne({ where: { debtorsid },});
+//         // Check if the debtor has already been assigned to an agent
+//         const existingDebtor = await Assignagent.findOne({ where: { debtorsid },});
 
-        if (existingDebtor) {
-            return res.status(400).json({
-                error: true,
-                message: "This Customer has already been assigned to an agent",
-            });
-        }
+//         if (existingDebtor) {
+//             return res.status(400).json({
+//                 error: true,
+//                 message: "This Customer has already been assigned to an agent",
+//             });
+//         }
 
-        // Assign the agent to the debtor
-        const agentAssigned = await Assignagent.create({ agentid, debtorsid });
+//         // Assign the agent to the debtor
+//         const agentAssigned = await Assignagent.create({ agentid, debtorsid });
 
-        if (agentAssigned) {
-            return res.status(200).json({
-                error: false,
-                message: "Agent successfully assigned to a customer",
-            });
-        } else {
-            return res.status(400).json({
-                error: true,
-                message: "Failed to assign Agent to customer",
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            error: true,
-            message: "Oops! Something went wrong",
-            data: error.message,
-        });
-    }
-},
+//         if (agentAssigned) {
+//             return res.status(200).json({
+//                 error: false,
+//                 message: "Agent successfully assigned to a customer",
+//             });
+//         } else {
+//             return res.status(400).json({
+//                 error: true,
+//                 message: "Failed to assign Agent to customer",
+//             });
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({
+//             error: true,
+//             message: "Oops! Something went wrong",
+//             data: error.message,
+//         });
+//     }
+// },
 
 
     // get debtors by agent assinged id 
+    
+    async assignAgent(req, res) {
+      try {
+          const { agentid, debtorsid } = req.body;
+  
+          if (!agentid || !debtorsid) {
+              return res.status(400).json({
+                  error: true,
+                  message: "All fields are required",
+              });
+          }
+  
+          // Check if the agent exists in the agent table
+          const agentExists = await Fieldagent.findOne({
+              where: { agentid: agentid },
+          });
+          if (!agentExists) {
+              return res.status(400).json({
+                  error: true,
+                  message: "Agent does not exist",
+              });
+          }
+  
+          // Check if the debtor has already been assigned to an agent
+          const existingAssignment = await Assignagent.findOne({
+              where: { debtorsid },
+          });
+          if (existingAssignment) {
+              return res.status(400).json({
+                  error: true,
+                  message: "This debtor has already been assigned to an agent",
+              });
+          }
+  
+          // Assign the agent to the debtor
+          const agentAssigned = await Assignagent.create({ agentid, debtorsid });
+          if (agentAssigned) {
+              return res.status(200).json({
+                  error: false,
+                  message: "Agent has been assigned to this debtor",
+              });
+          } else {
+              return res.status(400).json({
+                  error: true,
+                  message: "Failed to assign agent to debtor",
+              });
+          }
+      } catch (error) {
+          console.error(error);
+          return res.status(500).json({
+              error: true,
+              message: "Oops! Something went wrong",
+              data: error.message,
+          });
+      }
+  },
+  
+    
     async getassignedDebtorsbyid(req, res) {
         try {
           const { agentid } = req.params;
