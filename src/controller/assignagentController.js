@@ -83,7 +83,7 @@ const assignagentController = {
           if (existingAssignment) {
               return res.status(400).json({
                   error: true,
-                  message: "This debtor has already been assigned to an agent",
+                  message: "This Customer has already been assigned to an Agent",
               });
           }
   
@@ -92,12 +92,12 @@ const assignagentController = {
           if (agentAssigned) {
               return res.status(200).json({
                   error: false,
-                  message: "Agent has been assigned to this debtor",
+                  message: "Agent assigned to customer successfully",
               });
           } else {
               return res.status(400).json({
                   error: true,
-                  message: "Failed to assign agent to debtor",
+                  message: "Failed to assign Agent to customer",
               });
           }
       } catch (error) {
