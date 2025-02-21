@@ -8,7 +8,7 @@ const customerdocController = {
         try{
             const docId = crypto.randomBytes(16).toString("hex");
     
-           let docstructure = JSON.stringify(req.body.documentstructure)
+           var docstructure = JSON.stringify(req.body.documentstructure)
            
             const document = await Customerdoc.create({
                 documentid: docId,
@@ -163,6 +163,7 @@ const customerdocController = {
                 })
     
             }else{
+                var docstructure = JSON.stringify(req.body.documentstructure)
                 await updateDoc.update({
                     documenttitle:req.body.documenttitle,
                     documentdescription:req.body.documentdescription,
