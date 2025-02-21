@@ -12,6 +12,10 @@ let Schema = (Sequelize,mode) => {
             type: Sequelize.STRING,
             allowNull:false
         },
+        tenantid : {
+            type: Sequelize.STRING,
+            allowNull:false
+        },
         documenttitle : {
             type: Sequelize.STRING,
             allowNull:false

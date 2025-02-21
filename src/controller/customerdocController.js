@@ -13,6 +13,7 @@ const customerdocController = {
             const document = await Customerdoc.create({
                 documentid: docId,
                 documenttitle:req.body.documenttitle,
+                tenantid:req.body.tenantid,
                 documentdescription:req.body.documentdescription,
                 documentstructure: docstructure
                 
@@ -103,6 +104,37 @@ const customerdocController = {
                 error:false,
                 message:"Document acquired successfully",
                 data:getByid
+            })
+           
+        }
+    } catch (error) {
+    console.log(error);
+    return  res.status(500).json({
+        error:true,
+        message: "Oops! some thing went wrong",
+        data:error.message
+        })
+            
+    }
+    },
+
+    async getDocumentbytenantid(req,res){
+        try {
+            
+       const {tenantid} = req.params;
+        const getBytenantid = await Customerdoc.findOne({where:{tenantid}});
+        if(!getBytenantid){
+            return res.status(400).json({
+                error:true,
+                message:"Failed to acquire Document"
+            })
+          
+    
+        }else{
+            return res.status(200).json({
+                error:false,
+                message:"Document acquired successfully",
+                data:getBytenantid
             })
            
         }

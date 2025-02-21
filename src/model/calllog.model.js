@@ -11,6 +11,10 @@ let Schema = (Sequelize,mode) => {
             type: Sequelize.STRING,
             allowNull:true
         },
+        clientname : {
+            type: Sequelize.STRING,
+            allowNull:true
+        },
         debtorid : {
             type: Sequelize.STRING,
             allowNull:true

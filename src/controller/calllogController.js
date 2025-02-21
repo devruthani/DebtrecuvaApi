@@ -12,6 +12,7 @@ const calllogController = {
             const createCallog = await Calllog.create({
                 calllogid: calllogId,
                 debtorid: req.body.debtorid,
+                clientname: req.body.clientname,
                 tenantid: req.body.tenantid,
                 nameofborrower: req.body.nameofborrower,
                 primarynumber: req.body.primarynumber,
@@ -275,6 +276,7 @@ const calllogController = {
             }else{
                 await updateCalllog.update({
                     debtorid: req.body.debtorid,
+                    clientname: req.body.clientname,
                     tenantid: req.body.tenantid,
                     nameofborrower: req.body.nameofborrower,
                     primarynumber: req.body.primarynumber,
