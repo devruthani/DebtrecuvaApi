@@ -8,6 +8,8 @@ const calllogController = {
     async createCallog(req,res){
         try{
             const calllogId = crypto.randomBytes(16).toString("hex");
+
+            var agentDoc = JSON.stringify(req.body.agentdoc)
     
             const createCallog = await Calllog.create({
                 calllogid: calllogId,
@@ -17,7 +19,7 @@ const calllogController = {
                 nameofborrower: req.body.nameofborrower,
                 primarynumber: req.body.primarynumber,
                 loanid: req.body.loanid,
-                agentdoc : req.body.agentdoc,
+                agentdoc : agentDoc,
                 agentid : req.body.agentid,
                 clientid : req.body.clientid,
                 callconnected : req.body.callconnected,
@@ -274,6 +276,7 @@ const calllogController = {
                 })
     
             }else{
+                var agentDoc = JSON.stringify(req.body.agentdoc)
                 await updateCalllog.update({
                     debtorid: req.body.debtorid,
                     clientname: req.body.clientname,
@@ -281,7 +284,7 @@ const calllogController = {
                     nameofborrower: req.body.nameofborrower,
                     primarynumber: req.body.primarynumber,
                     loanid: req.body.loanid,
-                    agentdoc : req.body.agentdoc,
+                    agentdoc : agentDoc,
                     agentid : req.body.agentid,
                     clientid : req.body.clientid,
                     callconnected : req.body.callconnected,
