@@ -59,7 +59,7 @@ router.post("/api/calllog/delete/:calllogid",calllogController.deleteCalllog);
 /* ------------------------------ document api --------------------------------------- */
 
 router.post("/api/document/create",customerdocController.createDocument);
-router.get("/api/document/getall",customerdocController.fetchAllDocuments);
+router.get("/api/document/getall/:offset/:limit",customerdocController.fetchAllDocuments);
 router.get("/api/document/getbyid/:documentid",customerdocController.getDocumentbyid);
 router.get("/api/document/getbytenantid/:tenantid",customerdocController.getDocumentbytenantid);
 router.post("/api/document/edit",customerdocController.editDocument);
