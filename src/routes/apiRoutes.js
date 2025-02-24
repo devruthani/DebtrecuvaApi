@@ -47,7 +47,7 @@ router.post("/api/task/deletetask/:taskid",agenttaskController.deleteTask);
 
 router.post("/api/calllog/create",calllogController.createCallog);
 router.get("/api/calllog/getall/:offset/:limit",calllogController.fetchAllCallLogs);
-router.get("/api/calllog/getbycallid/:calllogid",calllogController.fetchallByid);
+router.get("/api/calllog/getbycalllogid/:calllogid",calllogController.fetchallByid);
 router.get("/api/calllog/getbytenantid/:tenantid",calllogController.fetchByTenantid);
 router.get("/api/calllog/getbyclientid/:clientid",calllogController.fetchByClientid);
 router.get("/api/calllog/getbydebtorid/:debtorid",calllogController.fetchByDebtorid);
