@@ -16,6 +16,14 @@ let Schema = (Sequelize,mode) => {
             type: Sequelize.STRING,
             allowNull:false
         },
+        clientid : {
+            type: Sequelize.STRING,
+            allowNull:false
+        },
+        tenantid : {
+            type: Sequelize.STRING,
+            allowNull:false
+        },
                
               
         ...generateTimestamps(Sequelize,mode)

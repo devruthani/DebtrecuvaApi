@@ -124,10 +124,10 @@ const agenttaskController = {
             
        const {agentid} = req.params;
         const getByagentid = await Agenttask.findAll({where:{agentid}});
-        if(!getByagentid){
+        if(getByagentid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Task"
+                message:"Agent with this id not found"
             })
           
     

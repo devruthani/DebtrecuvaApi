@@ -31,6 +31,8 @@ router.get("/api/fieldagent/stats/:agentid",fieldAgentController.stats);
 router.post("/api/assignagent/assign",assignagentController.assignAgent);
 router.get("/api/getdebtors/:agentid",assignagentController.getassignedDebtorsbyid);
 router.get("/api/alldebtorsid",assignagentController.getAllDebtorsid);
+router.get("/api/getbyclientid/:clientid",assignagentController.getAllDebtorsidbyClientid);
+router.post("/api/unassigndebtor/:agentid/:debtorsid",assignagentController.unassignDebtor);
 // end 
 
 // agent task starts here 

@@ -122,11 +122,11 @@ const customerdocController = {
         try {
             
        const {tenantid} = req.params;
-        const getBytenantid = await Customerdoc.findOne({where:{tenantid}});
-        if(!getBytenantid){
+        const getBytenantid = await Customerdoc.findAll({where:{tenantid}});
+        if(getBytenantid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Failed to acquire Document"
+                message:"Tenant ID not found"
             })
           
     
@@ -196,7 +196,7 @@ const customerdocController = {
             const delTask = await Customerdoc.findOne({where: {documentid}});
     
             if(!delTask){
-                return res.status(400).json({ error:true,message: "Document not found" });
+                return res.status(400).json({ error:true,message: "Document with this id not found" });
     
             }else{
                 await delTask.destroy();

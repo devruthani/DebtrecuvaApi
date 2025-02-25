@@ -56,9 +56,9 @@ const assignagentController = {
     
     async assignAgent(req, res) {
       try {
-          const { agentid, debtorsid } = req.body;
+          const { agentid, debtorsid, clientid, tenantid } = req.body;
   
-          if (!agentid || !debtorsid) {
+          if (!agentid || !debtorsid || !clientid || !tenantid) {
               return res.status(400).json({
                   error: true,
                   message: "All fields are required",
@@ -88,7 +88,12 @@ const assignagentController = {
           }
   
           // Assign the agent to the debtor
-          const agentAssigned = await Assignagent.create({ agentid, debtorsid });
+          const agentAssigned = await Assignagent.create({ 
+            agentid, 
+            debtorsid, 
+            clientid, 
+            tenantid 
+          });
           if (agentAssigned) {
               return res.status(200).json({
                   error: false,
@@ -191,7 +196,93 @@ const assignagentController = {
             data: error.message,
           });
         }
-      }
+      },
+
+      /* ----------------------- get all debtors by clientid ---------------------- */
+
+      async getAllDebtorsidbyClientid(req, res) {
+        try {
+          const {clientid} = req.params;
+          // Fetch only the 'debtorsid' field from the database.
+          const clientDebtors = await Assignagent.findAll({ where:{clientid},
+            attributes: ['debtorsid']
+          });
+      
+          // Check if the returned array is empty
+          if (!clientDebtors || clientDebtors.length === 0) {
+            return res.status(404).json({
+              error: true,
+              message: "No debtors found"
+            });
+          } else {
+            return res.status(200).json({
+              error: false,
+              message: "All Debtorsid Assigned to client",
+              data: clientDebtors
+            });
+          }
+        } catch (error) {
+          console.error(error);
+          return res.status(500).json({
+            error: true,
+            message: "Oops! Something went wrong",
+            data: error.message,
+          });
+        }
+      },
+
+      /* --------------------- un assign debtor from an agent --------------------- */
+      async unassignDebtor(req, res) {
+        try {
+            const { agentid, debtorsid } = req.params;
+    
+            if (!agentid || !debtorsid) {
+                return res.status(400).json({
+                    error: true,
+                    message: "Both agentid and debtorsid are required",
+                });
+            }
+    
+            // Find the assignment with both agentid and debtorsid
+            const checkDebtor = await Assignagent.findOne({
+                where: {debtorsid},
+            });
+            const checkAgent = await Assignagent.findOne({
+                where: {agentid},
+            });
+    
+            if (!checkDebtor) {
+                return res.status(400).json({
+                    error: true,
+                    message: "Debtor with this id not found",
+                });
+            }
+            if (!checkAgent) {
+                return res.status(400).json({
+                    error: true,
+                    message: "Agent with this id not found",
+                });
+            }
+    
+            // Delete the assignment
+            await Assignagent.destroy({
+                where: { agentid, debtorsid },
+            });
+    
+            return res.status(200).json({
+                error: false,
+                message: "Debtor successfully unassigned from agent",
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: true,
+                message: "Oops! Something went wrong",
+                data: error.message,
+            });
+        }
+    }
+    
       
 
 }
