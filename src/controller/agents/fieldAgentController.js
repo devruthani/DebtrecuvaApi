@@ -608,7 +608,7 @@ const fieldAgentController = {
     
         var allCustomers = await Assignagent.findAll({where: {agentid}})
         var allCallLogs = await Calllog.findAll({where:{agentid}})
-        var allCallLogs = await Calllog.findAll({where:{clientid}})
+       
         return res.status(200).json({
           error:false,
           message:"Stats acquired Successful",
