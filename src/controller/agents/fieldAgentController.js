@@ -491,6 +491,35 @@ const fieldAgentController = {
     }
   },
 
+
+  /* ---------------------------- get by tenant id ---------------------------- */
+   async getbytenantid(req, res) {
+    try {
+      const { tenantid } = req.params;
+      const fieldAgent = await Fieldagent.findOne({ where: { tenantid } });
+
+      if (fieldAgent) {
+        return res.status(200).json({
+          error: false,
+          message: "Agent information acquired successfully",
+          data: fieldAgent,
+        });
+      } else {
+        return res.status(404).json({
+          error: true,
+          message: "Failed to acquire agent information",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        error: true,
+        message: "Oops! Something went wrong",
+        data: error.message,
+      });
+    }
+  },
+
   // fetch all agents 
   async getAllAgents(req, res) {
     try {
