@@ -4,6 +4,7 @@ const assignagentController = require("../controller/assignagentController");
 const { agenttaskController } = require("../controller/agenttaskController");
 const { calllogController } = require("../controller/calllogController");
 const { customerdocController } = require("../controller/customerdocController");
+const debtorspaymentController = require("../controller/debtorspaymentController");
 const router = express.Router();
 
 
@@ -71,7 +72,10 @@ router.post("/api/document/delete/:documentid",customerdocController.deleteDocum
 
 /* ------------------------------ document api ends here------------------------------ */
 
+/* --------------------------- debtors payment api -------------------------- */
+router.post("/api/payment/recordpayment",debtorspaymentController.recordPayment);
 
+/* -------------------------------- ends here ------------------------------- */
 
 
 

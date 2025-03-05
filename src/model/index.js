@@ -42,6 +42,7 @@ const Assignagent = DB.assignagent = require("./assignagent.model.js").Model(ini
 const Agenttask = DB.agenttask = require("./agenttask.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 const Calllog = DB.calllog = require("./calllog.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 const Customerdoc = DB.customerdoc = require("./customerdoc.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
+const Debtorspayment = DB.debtorspayment = require("./debtorspayment.model.js").Model(initialInstance, createSequelizeInstance(), Sequelize);
 
 
 
@@ -52,5 +53,6 @@ module.exports = {
     Assignagent,
     Agenttask,
     Calllog,
-    Customerdoc
+    Customerdoc,
+    Debtorspayment
 }
