@@ -59,7 +59,14 @@ const debtorspaymentController = {
 
             
         }
-    }
+    },
+
+    /* --------------------- get debtors payment by agentid --------------------- */
+
+
+    
+   
+    /* ------------------- get all records of debtors payment ------------------- */
 
 }
 module.exports = debtorspaymentController;

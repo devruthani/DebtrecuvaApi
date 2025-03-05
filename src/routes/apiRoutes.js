@@ -18,7 +18,7 @@ router.post("/api/fieldagent/verifyotp",fieldAgentController.verifyOTP);
 router.post("/api/fieldagent/resendotp",fieldAgentController.resendOTP);
 router.post("/api/fieldagent/resetpassword",fieldAgentController.resetPassword);
 router.get("/api/fieldagent/getbyid/:agentid",fieldAgentController.getAgentbyid);
-router.get("/api/fieldagent/getbytenantid/:tenantid",fieldAgentController.getbytenantid);
+router.get("/api/fieldagent/getbytenantid/:tenantid/:offset/:limit",fieldAgentController.getbytenantid);
 router.get("/api/fieldagent/getall/:offset/:limit",fieldAgentController.getAllAgents);
 router.post("/api/fieldagent/edit",fieldAgentController.editAgent);
 router.post("/api/fieldagent/delete/:agentid",fieldAgentController.deleteAgent);

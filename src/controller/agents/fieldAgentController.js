@@ -266,7 +266,7 @@ const fieldAgentController = {
             // Check if the email exists in the database
             const user = await Fieldagent.findOne({ where: {email: checkEmail} });
             if (!user) {
-                return res.status(404).json({
+                return res.status(400).json({
                     error: true,
                     message: "Agent with this email does not exist",
                 });
@@ -325,7 +325,7 @@ const fieldAgentController = {
           // Check if the email exists in the database
           const user = await Fieldagent.findOne({ where: {email: checkEmail} });
           if (!user) {
-              return res.status(404).json({
+              return res.status(400).json({
                   error: true,
                   message: "Agent with this email does not exist",
               });
@@ -476,7 +476,7 @@ const fieldAgentController = {
           data: agentInfo,
         });
       } else {
-        return res.status(404).json({
+        return res.status(400).json({
           error: true,
           message: "Failed to acquire agent information",
         });
@@ -496,16 +496,29 @@ const fieldAgentController = {
    async getbytenantid(req, res) {
     try {
       const { tenantid } = req.params;
-      const fieldAgent = await Fieldagent.findOne({ where: { tenantid } });
+
+      const limit = Number(req.params.limit);
+      const offset = Number(req.params.offset);
+
+
+        const totalAgent = await Fieldagent.count(); // Get the total number of admin
+        const totalPages = Math.ceil(totalAgent / limit); // Calculate total pages
+
+      const fieldAgent = await Fieldagent.findAll({ 
+        where: { tenantid },
+        limit: limit,
+        offset: offset });
 
       if (fieldAgent) {
         return res.status(200).json({
           error: false,
           message: "Agent information acquired successfully",
           data: fieldAgent,
+          totalCount: totalAgent,
+          totalPages: totalPages
         });
       } else {
-        return res.status(404).json({
+        return res.status(400).json({
           error: true,
           message: "Failed to acquire agent information",
         });
@@ -539,10 +552,11 @@ const fieldAgentController = {
                 error: false,
                 message: "Agents acquired successfully",
                 data: fetchAllAgent,
+                totalCount: totalAgent,
                 totalPages: totalPages // Send totalPages in the response
             });
         } else {
-            return res.status(404).json({
+            return res.status(400).json({
                 error: true,
                 message: "Failed to fetch agents"
             });

@@ -129,7 +129,7 @@ async getassignedDebtorsbyid(req, res) {
                 }
             });
         } else {
-            return res.status(404).json({
+            return res.status(400).json({
                 error: true,
                 message: "Failed to acquire agent list",
                 pagination: {
@@ -205,7 +205,7 @@ async getassignedDebtorsbyid(req, res) {
   //                 data: newarray,
   //             });
   //         } else {
-  //             return res.status(404).json({
+  //             return res.status(400).json({
   //                 error: true,
   //                 message: "Failed to acquire agent list",
   //             });
@@ -232,7 +232,7 @@ async getassignedDebtorsbyid(req, res) {
       
           // Check if the returned array is empty
           if (!debtors || debtors.length === 0) {
-            return res.status(404).json({
+            return res.status(400).json({
               error: true,
               message: "No debtors found"
             });
@@ -265,7 +265,7 @@ async getassignedDebtorsbyid(req, res) {
       
           // Check if the returned array is empty
           if (!clientDebtors || clientDebtors.length === 0) {
-            return res.status(404).json({
+            return res.status(400).json({
               error: true,
               message: "No debtors found"
             });

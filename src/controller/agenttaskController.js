@@ -67,7 +67,7 @@ const agenttaskController = {
                     totalPages: totalPages // Send totalPages in the response
                 });
             } else {
-                return res.status(404).json({
+                return res.status(400).json({
                     error: true,
                     message: "Failed to fetch task"
                 });
