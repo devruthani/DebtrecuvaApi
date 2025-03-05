@@ -59,7 +59,7 @@ const customerdocController = {
                 offset: offset
             });
     
-            if (fetchDocuments) {
+            if (fetchDocuments.length>0) {
                 return res.status(200).json({
                     error: false,
                     message: "Documents acquired successfully",
@@ -67,9 +67,10 @@ const customerdocController = {
                     totalPages: totalPages // Send totalPages in the response
                 });
             } else {
-                return res.status(400).json({
+                return res.status(200).json({
                     error: true,
-                    message: "Failed to fetch Documents"
+                    message: "No Documents found",
+                    data: fetchDocuments
                 });
             }
         } catch (error) {
@@ -83,7 +84,7 @@ const customerdocController = {
     },
     
     
-    /* ----------------------------- GET TASK BY ID ---------------------------- */
+    /* ----------------------------- GET document BY ID ---------------------------- */
     
     
     
@@ -126,7 +127,8 @@ const customerdocController = {
         if(getBytenantid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"Tenant ID not found"
+                message:"Tenant ID not found",
+                data:getBytenantid
             })
           
     

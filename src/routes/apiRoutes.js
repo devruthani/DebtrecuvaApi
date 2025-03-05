@@ -18,8 +18,8 @@ router.post("/api/fieldagent/verifyotp",fieldAgentController.verifyOTP);
 router.post("/api/fieldagent/resendotp",fieldAgentController.resendOTP);
 router.post("/api/fieldagent/resetpassword",fieldAgentController.resetPassword);
 router.get("/api/fieldagent/getbyid/:agentid",fieldAgentController.getAgentbyid);
-router.get("/api/fieldagent/getbytenantid/:tenantid/:offset/:limit",fieldAgentController.getbytenantid);
-router.get("/api/fieldagent/getall/:offset/:limit",fieldAgentController.getAllAgents);
+router.get("/api/fieldagent/getbytenantid/:tenantid",fieldAgentController.getbytenantid);
+router.get("/api/fieldagent/getall",fieldAgentController.getAllAgents);
 router.post("/api/fieldagent/edit",fieldAgentController.editAgent);
 router.post("/api/fieldagent/delete/:agentid",fieldAgentController.deleteAgent);
 router.get("/api/fieldagent/stats/:agentid",fieldAgentController.stats);
@@ -74,6 +74,8 @@ router.post("/api/document/delete/:documentid",customerdocController.deleteDocum
 
 /* --------------------------- debtors payment api -------------------------- */
 router.post("/api/payment/recordpayment",debtorspaymentController.recordPayment);
+router.get("/api/payment/getbyagentid/:agentid",debtorspaymentController.getPayRecordByagentid);
+router.get("/api/payment/getallrecords",debtorspaymentController.getAllPayments);
 
 /* -------------------------------- ends here ------------------------------- */
 

@@ -78,17 +78,19 @@ const calllogController = {
                 offset: offset
             });
     
-            if (fetchAllcalls) {
+            if (fetchAllcalls.length>0) {
                 return res.status(200).json({
                     error: false,
                     message: "Call Log acquired successfully",
                     data: fetchAllcalls,
-                    totalPages: totalPages // Send totalPages in the response
+                    totalPages: totalPages, // Send totalPages in the response
+                    totalCount: totalCalls
                 });
             } else {
-                return res.status(400).json({
+                return res.status(200).json({
                     error: true,
-                    message: "Failed to fetch call log"
+                    message: "Failed to fetch call log",
+                    data:fetchAllcalls
                 });
             }
         } catch (error) {
@@ -110,7 +112,7 @@ const calllogController = {
         try {
             
        const {calllogid} = req.params;
-        const getByid = await Calllog.findAll({where:{calllogid}});
+        const getByid = await Calllog.findOne({where:{calllogid}});
 
         if(!getByid){
             return res.status(400).json({
@@ -145,9 +147,10 @@ const calllogController = {
        const {debtorid} = req.params;
         const getBydebtorid = await Calllog.findAll({where:{debtorid}});
         if(getBydebtorid.length === 0){
-            return res.status(400).json({
+            return res.status(200).json({
                 error:true,
-                message:"ID not found"
+                message:"ID not found",
+                data:getBydebtorid
             })
           
     
@@ -178,7 +181,8 @@ const calllogController = {
         if(getByagentid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"ID not found"
+                message:"ID not found",
+                data:getByagentid
             })
           
     
@@ -209,7 +213,8 @@ const calllogController = {
         if(getByclientid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"ID not Found "
+                message:"ID not Found",
+                data:getByclientid
             })
           
     
@@ -240,7 +245,8 @@ const calllogController = {
         if(getBytenantid.length === 0){
             return res.status(400).json({
                 error:true,
-                message:"ID not found"
+                message:"ID not found",
+                data:getBytenantid
             })
           
     

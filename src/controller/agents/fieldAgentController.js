@@ -16,71 +16,7 @@ const emailRegexp =
 
 
 const fieldAgentController = {
-    // async fieldAgentsignUp(req, res) {
-    //     try {
-    //       const agentId = crypto.randomBytes(16).toString("hex");
-    //       const password = encrypt(req.body.password);
-    
-    //       if (
-    //         req.body.firstname &&
-    //         req.body.tenantid &&
-    //         req.body.lastname &&
-    //         req.body.email &&
-    //         req.body.mobile &&
-    //         req.body.password &&
-    //         req.body.lga &&
-    //         req.body.state &&
-    //         req.body.address 
-
-    //       ) {
-    //         if (emailRegexp.test(req.body.email)) {
-    //           const regAgent = await Fieldagent.create({
-    //             agentid: agentId,
-    //             tenantid:req.body.tenantid,
-    //             firstname: req.body.firstname,
-    //             lastname: req.body.lastname,
-    //             email: req.body.email,
-    //             mobile: req.body.mobile,
-    //             state: req.body.state,
-    //             address: req.body.address,
-    //             lga: req.body.lga,
-    //             password: password,
-    //           });
-    //           if (regAgent) {
-    //             return res.status(200).json({
-    //               error: false,
-    //               message: "You have been registered successfully",
-    //             });
-    //           } else {
-    //             return res.status(400).json({
-    //               error: true,
-    //               message: "Registration failed",
-    //             });
-    //           }
-    //         } else {
-    //           return res.status(400).json({
-    //             error: true,
-    //             message: "Email should be provided in the right format",
-    //           });
-    //         }
-    //       } else {
-    //         return res.status(400).json({
-    //           error: true,
-    //           message: "All fields are required",
-    //         });
-    //       }
-    //     } catch (error) {
-    //       console.log(error);
-    //       return res.status(500).json({
-    //         error: true,
-    //         message: "Oops! some thing went wrong",
-    //         data: error.message,
-    //       });
-    //     }
-    //   },
-
-    //   Login user 
-    
+   
     async fieldAgentsignUp(req, res) {
       try {
         const {
@@ -210,47 +146,7 @@ const fieldAgentController = {
           });
         }
       },
-      // async forgotPassword(req, res) {
-      //   try {
-      //     // check if email was sent
-      //     const checkEmail = req.body.email;
-      //     if (!checkEmail) {
-      //       return res.status(400).json({
-      //         error: true,
-      //         message: "No email was sent",
-      //       });
-      //     } else {
-      //       const otp = randomOtp(6);
-      //       // create a jwt containing the otp and email, with a 5 minutes expiration time
-      //       const token = jwt.sign(
-      //         { otp, email: checkEmail },
-      //         process.env.JWT_SECRET_KEY,
-      //         { expiresIn: "5m" }
-      //       );
-    
-      //       // Send the token in the email (user will use this token in the verification process)
-      //       await sendMail(
-      //         checkEmail,
-      //         "OTP Verification Code",
-      //         `<h1>Your OTP verification code is ${otp} </h1>`
-      //       );
-    
-      //       return res.status(200).json({
-      //         error: false,
-      //         message: "An OTP has been sent to your email",
-      //         token: token,
-      //       });
-      //     }
-      //   } catch (error) {
-      //     console.log(error);
-      //     return res.status(500).json({
-      //       error: true,
-      //       message: "Oops! some thing went wrong",
-      //       data: error.message,
-      //     });
-      //   }
-      // },
-    
+     
       async forgotPassword(req, res) {
         try {
             // Check if email was provided
@@ -497,30 +393,46 @@ const fieldAgentController = {
     try {
       const { tenantid } = req.params;
 
-      const limit = Number(req.params.limit);
-      const offset = Number(req.params.offset);
+      const limit = Number(req.query.limit) || 10; // Default limit
+        let page = Number(req.query.page) || 1;
+        let offset = (page - 1) * limit;
 
-
-        const totalAgent = await Fieldagent.count(); // Get the total number of admin
-        const totalPages = Math.ceil(totalAgent / limit); // Calculate total pages
+        const totalCountofallagents = await Fieldagent.count({});
+        const totalCount = await Fieldagent.count({ where: { tenantid } });
+        const totalPages = Math.ceil(totalCount / limit);
 
       const fieldAgent = await Fieldagent.findAll({ 
         where: { tenantid },
-        limit: limit,
-        offset: offset });
+        limit,
+        offset 
+      });
 
-      if (fieldAgent) {
+      if (fieldAgent.length>0) {
         return res.status(200).json({
           error: false,
           message: "Agent information acquired successfully",
           data: fieldAgent,
-          totalCount: totalAgent,
-          totalPages: totalPages
+          pagination:{
+            currentPage: page,
+            itemsPerPage: limit,
+            totalPages,
+            totalCount,
+            allFieldAgents:totalCountofallagents
+          }
+          
         });
       } else {
-        return res.status(400).json({
+        return res.status(200).json({
           error: true,
           message: "Failed to acquire agent information",
+          data:fieldAgent,
+          pagination:{
+            currentPage: page,
+            itemsPerPage: limit,
+            totalPages,
+            totalCount,
+            allFieldAgents:totalCountofallagents
+          }
         });
       }
     } catch (error) {
@@ -536,29 +448,44 @@ const fieldAgentController = {
   // fetch all agents 
   async getAllAgents(req, res) {
     try {
-        const limit = Number(req.params.limit);
-        const offset = Number(req.params.offset);
+      const limit = Number(req.query.limit) || 10; // Default limit
+      let page = Number(req.query.page) || 1;
+      let offset = (page - 1) * limit;
 
-        const totalAgent = await Fieldagent.count(); // Get the total number of admin
-        const totalPages = Math.ceil(totalAgent / limit); // Calculate total pages
+      const totalCount = await Fieldagent.count({});
+      
+      const totalPages = Math.ceil(totalCount / limit);
 
         const fetchAllAgent = await Fieldagent.findAll({
-            limit: limit,
-            offset: offset
+            limit,
+            offset
         });
 
-        if (fetchAllAgent) {
+        if (fetchAllAgent.length>0) {
             return res.status(200).json({
                 error: false,
                 message: "Agents acquired successfully",
                 data: fetchAllAgent,
-                totalCount: totalAgent,
-                totalPages: totalPages // Send totalPages in the response
+                pagination:{
+                  currentPage: page,
+                  itemsPerPage: limit,
+                  totalPages,
+                  totalCount,
+                }
+                
             });
         } else {
-            return res.status(400).json({
+            return res.status(200).json({
                 error: true,
-                message: "Failed to fetch agents"
+                message: "Failed to fetch agents",
+                data:fetchAllAgent,
+                pagination:{
+                  currentPage: page,
+                  itemsPerPage: limit,
+                  totalPages,
+                  totalCount,
+                }
+
             });
         }
     } catch (error) {

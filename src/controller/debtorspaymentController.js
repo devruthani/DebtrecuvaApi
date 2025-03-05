@@ -62,11 +62,119 @@ const debtorspaymentController = {
     },
 
     /* --------------------- get debtors payment by agentid --------------------- */
+    async getPayRecordByagentid(req,res){
+        try {
+            
+      
+        const limit = Number(req.query.limit) || 10; // Default limit
+        let page = Number(req.query.page) || 1;
+        let offset = (page - 1) * limit;
 
+        const { agentid } = req.params;
+          // Get total count of assigned debtors for pagination
+          const totalCount = await Debtorspayment.count({ where: { agentid } });
+          const totalPages = Math.ceil(totalCount / limit);
+  
+          let debtorsPayment = await Debtorspayment.findAll({
+              where: { agentid },
+              limit,
+              offset
+          });
+
+          if(debtorsPayment.length>0){
+            return res.status(200).json({
+                error: false,
+                message: "Payment Record Acquired",
+                data: debtorsPayment,
+                pagination: {
+                    currentPage: page,
+                    itemsPerPage: limit,
+                    totalPages,
+                    totalCount
+                }
+            });
+        } else {
+            return res.status(200).json({
+                error: true,
+                message: "No Records founds for this id ",
+                data: debtorsPayment,
+                pagination: {
+                    currentPage: page,
+                    itemsPerPage: limit,
+                    totalPages,
+                    totalCount
+                }
+            });
+
+          }
+        } catch (error) {
+            console.log(error);
+        return res.status(400).json({
+            error: true,
+            message: "Oops! Something went wrong",
+            data: error.message,
+        });
+            
+        }
+
+
+    },
 
     
    
     /* ------------------- get all records of debtors payment ------------------- */
+    async getAllPayments(req,res){
+        try{
+        const limit = Number(req.query.limit) || 10; // Default limit
+        let page = Number(req.query.page) || 1;
+        let offset = (page - 1) * limit;
+         // Get total count of assigned debtors for pagination
+         const totalCount = await Debtorspayment.count({});
+         const totalPages = Math.ceil(totalCount / limit);
+ 
+         let allPaymentrecords = await Debtorspayment.findAll({
+             limit,
+             offset
+         });
+
+         if(allPaymentrecords.length>0){
+           return res.status(200).json({
+               error: false,
+               message: "Payment Record Acquired",
+               data: allPaymentrecords,
+               pagination: {
+                   currentPage: page,
+                   itemsPerPage: limit,
+                   totalPages,
+                   totalCount
+               }
+           });
+       } else {
+           return res.status(200).json({
+               error: true,
+               message: "No Records founds for this id ",
+               data: allPaymentrecords,
+               pagination: {
+                   currentPage: page,
+                   itemsPerPage: limit,
+                   totalPages,
+                   totalCount
+               }
+           });
+
+         }
+       } catch (error) {
+           console.log(error);
+       return res.status(400).json({
+           error: true,
+           message: "Oops! Something went wrong",
+           data: error.message,
+       });
+           
+       }
+
+
+    }
 
 }
 module.exports = debtorspaymentController;
